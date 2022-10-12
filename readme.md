@@ -22,4 +22,4 @@ To run the UI,
 
 
 # With docker-compose
-Alternatively, the project can be run by downloading the `docker-compose.yml` into a directory and running `docker-compose up` in the directory, then visiting the UI at `http://localhost:5173/`. Unfortunately, this requires authentication to Github setup.
+Alternatively, the project can be run by downloading the `docker-compose.yml` into a directory and running `docker-compose up` in the directory, then visiting the UI at `http://localhost:5173/`.
