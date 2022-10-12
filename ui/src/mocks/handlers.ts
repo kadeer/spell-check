@@ -17,19 +17,7 @@ export const handlers = [
         response = [
           {
             original: "abd",
-            suggestions: [
-              "bad",
-              "and",
-              "abs",
-              "ab",
-              "ad",
-              "abed",
-              "dab",
-              "aid",
-              "add",
-              "ab d",
-              "Abdul",
-            ],
+            suggestions: ["bad", "and", "abs", "ab", "ad"],
           },
         ];
       }
