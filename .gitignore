@@ -2,6 +2,8 @@
 
 composer.phar
 
+docker-compose-dev.yml
+
 # OS generated files #
 ######################
 .DS_Store
