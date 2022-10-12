@@ -2,11 +2,11 @@ version: "3"
 
 services:
   ui:
-    image: ghcr.io/kadeer/spell-check-ui
+    image: ghcr.io/kadeer/spell-check-ui:master
     ports: 
       - 5173:5173
 
   api:
-    image: ghcr.io/kadeer/spell-check-api
+    image: ghcr.io/kadeer/spell-check-api:master
     ports: 
       - 8000:8000
