@@ -62,9 +62,9 @@ export const Editor: React.FC<EditorProps> = ({
         quillRef.current?.editor?.getText().slice(0, -1) || ""
       );
 
-      const url = "/search";
+      // const url = "/search";
       // const url = "http://35.197.120.214:5000/api/v1/spell";
-      // const url = "http://localhost:8000/spell/check";
+      const url = "http://localhost:8000/spell/check";
 
       return fetch(url, {
         method: "POST",
