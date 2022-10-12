@@ -46,10 +46,12 @@ export const Editor: React.FC<EditorProps> = ({
 
   const [suggestions, setSuggestions] = useState<SuggestionResponse>([]);
 
+  // holds client-side, the items that have been added to dictionary
   const [dictionary, setDictionary] = useState<string[]>([]);
 
   const quillRef = createRef<ReactQuill>();
 
+  // handles fetching the suggestions from the API
   const { refetch } = useQuery(
     ["search", tokens.map((t) => t.token)],
     () => {
@@ -76,6 +78,11 @@ export const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     const editor = quillRef.current?.editor;
+
+    // if suggestions is not empty,
+    // for each token in tokens,
+    // check if the item exists in the dictionary, if it does, remove its formatting
+    // if the item doesn't exist in the dictionary, and there's a suggestion for it, apply the 'error' formatting to it
     if (suggestions?.length) {
       for (const token of tokens) {
         if (
@@ -102,8 +109,10 @@ export const Editor: React.FC<EditorProps> = ({
   useEffect(() => {
     const editor = quillRef.current?.editor;
 
+    // disable the browser's native spell-checking
     editor?.root.setAttribute("spellcheck", "false");
 
+    // callback to filter data pasted into the editor to paste only plain text
     editor?.clipboard.addMatcher(Node.ELEMENT_NODE, (node) => {
       const Delta2 = Quill.import("delta");
       return new Delta2().insert(node.innerText);
@@ -112,11 +121,11 @@ export const Editor: React.FC<EditorProps> = ({
     // editor?.root.addEventListener("contextmenu", handleContextMenu);
   }, [quillRef]);
 
+  // throttle the calls to the spell-checking API
   const getSuggestions = useCallback(
     throttle(
       async () => {
         const { data } = await refetch();
-        // console.log(data);
         setSuggestions(data);
       },
       1500,
@@ -131,6 +140,9 @@ export const Editor: React.FC<EditorProps> = ({
     source,
     { getText}
   ) => {
+    // we need to handle the special case of being at the end of an error block, and hitting the space button
+    // if we hit the space button next to an error block, remove the formatting from everything right on the right-edge
+    // of the error block so the formatting doesn't "spill" into the next word being typed
     if (
       delta.ops?.[1]?.insert === " " &&
       delta.ops?.[1]?.attributes?.["error"]
@@ -143,6 +155,12 @@ export const Editor: React.FC<EditorProps> = ({
       );
     }
 
+    // tokenize by spaces the text content of the editor, and build a DS containing
+    // - token: the text segment
+    // - index: the offset from the start of the text in the editor
+    // - length: the length of the text segment
+    // - range: a tuple containing the offset start and offset end of the text segment
+    // - format: read formats from Quill DOM for the segment
     const matches = getText().slice(0, -1).matchAll(regex)!;
 
     const result: typeof tokens = [];
@@ -159,11 +177,14 @@ export const Editor: React.FC<EditorProps> = ({
       });
     }
     setTokens(result);
-    console.log(result);
 
+    // any time the editor content changes, call the spell-check API
     getSuggestions();
   };
 
+  // when the selection changes, we set state for when we are in a misspelled word range,
+  // and also set the metadata to be displayed for the suggestions including the actual suggestions,
+  // and the computed position of the dropdown meny
   const onSelectionChange: ReactQuill["onEditorChangeSelection"] = (
     selection,
     source,
@@ -199,6 +220,9 @@ export const Editor: React.FC<EditorProps> = ({
     });
   };
 
+  // when a suggestion is clicked from the dropdown menu,
+  // delete the existing text (misspelled word) in the editor,
+  // insert the suggestion in place, and move the cursor to the end of the newly inserted text
   const handleSuggestionClick = useCallback(
     (text: string, range: RangeStatic) => {
       const editor = quillRef.current?.editor;
@@ -210,6 +234,7 @@ export const Editor: React.FC<EditorProps> = ({
     [quillRef]
   );
 
+  // adds a "misspelled" word into the dictionary (client-side, so lost on refresh)
   const handleAddToDictionaryClick = useCallback((text: string) => {
     setDictionary((state) => [...state, text]);
     setSuggestionsMenuData(undefined);
