@@ -15,14 +15,14 @@ const config: {
   {
     lang: "fr",
     label: "Entrez du texte",
-    initialValue: "merce",
+    // initialValue: "merce",
   },
+  { lang: "it", label: "Inserisci del testo" },
   {
     lang: "en",
     label: "Enter some text here",
-    initialValue: "spedy and abd smoky spedy",
+    // initialValue: "spedy and abd smoky spedy",
   },
-  { lang: "it", label: "Inserisci del testo" },
 ];
 
 function App() {

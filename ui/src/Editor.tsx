@@ -128,7 +128,7 @@ export const Editor: React.FC<EditorProps> = ({
         const { data } = await refetch();
         setSuggestions(data);
       },
-      1500,
+      750,
       { trailing: true, leading: false }
     ),
     []

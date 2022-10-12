@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  ui:
+    build: ./ui
+    # image: ghcr.io/kadeer/spell-check-ui
+    ports: 
+      - 5173:5173
+
+  api:
+    build: ./api
+    # image: ghcr.io/kadeer/spell-check-api
+    ports: 
+      - 8000:8000
